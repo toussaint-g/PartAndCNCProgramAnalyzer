@@ -1,0 +1,10 @@
+# Ignore the pycache folder
+__pycache__/
+.vs/
+venv/
+*.pyc
+*.txt
+*.debug
+
+# sauf requirements.txt
+!requirements.txt
