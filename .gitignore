@@ -1,10 +1,16 @@
 # Ignore the pycache folder
 __pycache__/
-.vs/
+
+# Ignore the folders
+.vscode/
 venv/
+resources/
+data_testing/
+
+# Ignore the files
 *.pyc
 *.txt
 *.debug
 
-# sauf requirements.txt
+# Requirements
 !requirements.txt
