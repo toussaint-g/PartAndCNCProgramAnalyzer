@@ -42,7 +42,7 @@ class Interpreter:
             pattern_j = re.compile(r'J(-?\d*\.?\d+)')
             pattern_feedrate = re.compile(r'F(-?\d*\.?\d+)')
             pattern_tool = re.compile(r'T(-?\d*\.?\d+)')
-            pattern_move = re.compile(r'G([0-3])\b') #TODO: Gérer les doubles digit G00, G01, ...
+            pattern_move = re.compile(r'\bG0?([0-3])(?=\D|$)')
             pattern_mode = re.compile(r'G(90|91)')
             pattern_m6 = re.compile(r'\bM6\b')
 
