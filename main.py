@@ -45,30 +45,11 @@ def get_datetime_string():
 # Fonction traitement G-Code
 def gcode_treatment(path_gcode_file, path_export_file, machine_name):
 
-
-
-
-
-
-
-
-
-
+    # Charge les config
     MachinesConfigLoader.load_config()
 
-
-
+    # Récupère la config de la machine sélectionnée
     machine_config = MachinesConfigLoader.get_machine(machine_name)
-
-
-
-
-
-
-
-
-
-
 
     # Instanciation des classes
     obj_interpreter = Interpreter(machine_config) 
@@ -152,16 +133,8 @@ def viewer_launch(path_gcode_file, stl_path_file, machine_name):
 def main():
     """Point d'entrée de l'application"""
 
-
-
-
-
     # Charge les config
     MachinesConfigLoader.load_config() 
-
-
-
-
 
     style = Style(theme="darkly") 
 
