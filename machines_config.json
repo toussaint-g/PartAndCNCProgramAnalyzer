@@ -2,7 +2,7 @@
   "machines_list": {
     "TSUGAMI_BW128": {
       "calculationtolerance": 0.001,
-      "imgkinematic": "/img/TSUGAMI_BW128.jpg",
+      "imgkinematic": "img\\TSUGAMI_BW128.jpg",
       "gcodeinfo": {
 		    "rapidmove": "G0",
 		    "linearmove": "G1",

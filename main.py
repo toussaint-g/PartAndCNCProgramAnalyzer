@@ -6,12 +6,12 @@ from pathlib import Path
 from datetime import datetime
 import tkinter
 import tkinter as tk
-from tkinter import filedialog, messagebox, ttk
+#from tkinter import filedialog, messagebox, ttk
 from ttkbootstrap import Style
 import ttkbootstrap as tb 
 from PIL import Image, ImageTk
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+#from matplotlib.figure import Figure
+#from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import os
 
 # Modules internes
@@ -200,26 +200,28 @@ def main():
     # Section visualiser
     tb.Label(main_frame, text="🔍 Visualiser la configuration machine :", font=("Segoe UI", 18)).grid(column=1, row=8, sticky="w", padx=(40, 0), pady=(20, 5))
 
+    # Récupère la config de la machine sélectionnée
+    machine_config = MachinesConfigLoader.get_machine(machine_combo.get())
 
+    # Chemin de l'application
+    base = Path(__file__).parent
 
+    # Récupère le chemin de l'image de la machine sélectionnée
+    try:
+        rel = machine_config["imgkinematic"]
+    except KeyError:
+        raise ValueError("MachineConfigError: une clé est absente dans le fichier JSON")
 
+    # Convertit le chemin de l'image en chemin absolu
+    image_path = Path(base / rel)
 
+    # Vérifie que le fichier existe
+    if not image_path.exists():
+        raise ValueError(f"MachineConfigError: l'image spécifiée est introuvable : {image_path}")
 
-
-
-
-    # A modifier pour visualiser une image de la machine ou une page de config
-
-    #visualize_button = tb.Button(main_frame, text="Visualiser", bootstyle="success", command=lambda: viewer_launch())
-    #visualize_button.grid(column=1, row=9, sticky="w", padx=(40, 0), pady=5)
-
-
-
-
-
-
-
-
+    # Bouton
+    visualize_button = tb.Button(main_frame, text="Visualiser", bootstyle="success", command=lambda: os.startfile(image_path))
+    visualize_button.grid(column=1, row=9, sticky="w", padx=(40, 0), pady=5)
 
     # Section calculer
     # Fonction local pour désactiver les boutons tant que le ISO n'est pas chargé
