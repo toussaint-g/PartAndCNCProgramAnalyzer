@@ -1,17 +1,16 @@
 
 # -*- coding: utf-8 -*-
 
-from machine import Machine
-
 class Writer:
     """Classe qui permet d'écrire le rapport"""
 
-    def __init__(self):
+    def __init__(self, machine_config):
         self.digit_after_point_distance = 3
         self.digit_after_point_time = 4
 
         try:
-            self.rapidfeedrate = Machine.data["machine"]["rapidfeedrate"]
+            # JSON uses "machineinfo" section
+            self.rapidfeedrate = machine_config["machineinfo"]["rapidfeedrate"]
         except KeyError:
             raise ValueError("MachineConfigError: Clé 'rapidfeedrate' absente du fichier JSON")
 

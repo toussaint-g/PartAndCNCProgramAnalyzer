@@ -3,20 +3,21 @@
 
 import math
 import re
-from machine import Machine
+from machines_config_loader import MachinesConfigLoader
 from enum import Enum
 
 class Interpreter:
     """Classe qui permet d'analyser et comprendre le GCode"""
 
-    def __init__(self):
+    def __init__(self, machine_config):
         try:
-            self.rapid_move_code = Machine.data["gcode"]["rapidmove"]
-            self.linear_move_code = Machine.data["gcode"]["linearmove"]
-            self.circular_move_CW_code = Machine.data["gcode"]["circularmoveCW"]
-            self.circular_move_CWW_code = Machine.data["gcode"]["circularmoveCCW"]
-            self.rapidfeedrate = Machine.data["machine"]["rapidfeedrate"]
-            self.change_tool_time = Machine.data["machine"]["changetooltime"]
+            self.machine_config = machine_config
+            self.rapid_move_code = machine_config["gcodeinfo"]["rapidmove"]
+            self.linear_move_code = machine_config["gcodeinfo"]["linearmove"]
+            self.circular_move_CW_code = machine_config["gcodeinfo"]["circularmoveCW"]
+            self.circular_move_CWW_code = machine_config["gcodeinfo"]["circularmoveCCW"]
+            self.rapidfeedrate = machine_config["machineinfo"]["rapidfeedrate"]
+            self.change_tool_time = machine_config["machineinfo"]["changetooltime"]
         except KeyError:
             raise ValueError("MachineConfigError: une clé est absente dans le fichier JSON")
 
@@ -26,7 +27,7 @@ class Interpreter:
         # Liste pour stocker les objets Line
         lines = []
 
-        obj_modal = Modal()
+        obj_modal = Modal(self.machine_config)
         obj_mathematical_functions = MathematicalFunctions()
 
         with open(path, 'r') as gcode_file:
@@ -64,7 +65,7 @@ class Interpreter:
                 match_m6 = pattern_m6.search(line)
 
                 if match_x:
-                    if Machine.data["machine"]["xdiameter"]:
+                    if self.machine_config["machineinfo"]["xdiameter"]:
                         position_x = float(match_x.group(1))/2  #Si X est présent dans la ligne je le mémorise en convertissant en rayon si usinage en diamètre
                     else:
                         position_x = float(match_x.group(1))    #Si X est présent dans la ligne je le mémorise
@@ -245,15 +246,15 @@ class MathematicalFunctions:
 class Modal:
     """Classe qui permet de mémoriser les fonctions modales du GCode"""
 
-    def __init__(self):
+    def __init__(self, machine_config):
 
         try:
-            self.gcode_group01 = Machine.data["gcode"]["rapidmove"]
-            self.gcode_group02 = Machine.data["machine"]["defaultmovetype"] 
-            self.feedrate = Machine.data["machine"]["rapidfeedrate"]
-            self.position_x = Machine.data["machine"]["refx"]
-            self.position_y = Machine.data["machine"]["refy"]
-            self.position_z = Machine.data["machine"]["refz"]
+            self.gcode_group01 = machine_config["gcodeinfo"]["rapidmove"]
+            self.gcode_group02 = machine_config["machineinfo"]["defaultmovetype"] 
+            self.feedrate = machine_config["machineinfo"]["rapidfeedrate"]
+            self.position_x = machine_config["machineinfo"]["refx"]
+            self.position_y = machine_config["machineinfo"]["refy"]
+            self.position_z = machine_config["machineinfo"]["refz"]
         except KeyError:
             raise ValueError("MachineConfigError: une clé est absente dans le fichier JSON")
         

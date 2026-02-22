@@ -1,0 +1,59 @@
+{
+  "machines_list": {
+    "TSUGAMI_BW128": {
+      "calculationtolerance": 0.001,
+      "imgkinematic": "/img/TSUGAMI_BW128.jpg",
+      "gcodeinfo": {
+		    "rapidmove": "G0",
+		    "linearmove": "G1",
+		    "circularmoveCW": "G2",
+        "circularmoveCCW": "G3",
+        "toolchange": "M6"
+      },
+      "machineinfo": {
+        "rapidfeedrate": 25000,
+        "changetooltime": 1,
+        "refx": 20,
+        "refy": 0,
+        "refz": 0,
+        "defaultmovetype": "G90",
+        "xdiameter": true
+      },
+      "channels": [
+        {
+          "name": "channel_1",
+          "list_of_axis": ["X1", "Y1", "Z1"],
+          "list_of_tools": [
+            { "tool_name": "T1", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 },
+            { "tool_name": "T2", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 },
+            { "tool_name": "T3", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 },
+            { "tool_name": "T4", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 },
+            { "tool_name": "T5", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 }
+          ]
+        },
+        {
+          "name": "channel_2",
+          "list_of_axis": ["X1", "Y1", "Z1"],
+          "list_of_tools": [
+            { "tool_name": "T1", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 },
+            { "tool_name": "T2", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 },
+            { "tool_name": "T3", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 },
+            { "tool_name": "T4", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 },
+            { "tool_name": "T5", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 }
+          ]
+        },
+        {
+          "name": "channel_3",
+          "list_of_axis": ["X1", "Y1", "Z1"],
+          "list_of_tools": [
+            { "tool_name": "T1", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 },
+            { "tool_name": "T2", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 },
+            { "tool_name": "T3", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 },
+            { "tool_name": "T4", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 },
+            { "tool_name": "T5", "tool_type": 1, "i_vector": 0, "j_vector": 1, "k_vector": 0 }
+          ]
+        }
+      ]
+    }
+  }
+}

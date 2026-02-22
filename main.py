@@ -17,7 +17,7 @@ import os
 # Modules internes
 from interpreter import Interpreter
 from writer import Writer
-from machine import Machine
+from machines_config_loader import MachinesConfigLoader
 from tool_path_viewer import ToolPathViewer
 from tool_path_viewer_config_loader import ToolPathConfigLoader
 
@@ -43,14 +43,36 @@ def get_datetime_string():
     return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Fonction traitement G-Code
-def gcode_treatment(path_gcode_file, path_export_file):
+def gcode_treatment(path_gcode_file, path_export_file, machine_name):
 
-    # Charge les données de la machine
-    Machine.load_config() 
+
+
+
+
+
+
+
+
+
+    MachinesConfigLoader.load_config()
+
+
+
+    machine_config = MachinesConfigLoader.get_machine(machine_name)
+
+
+
+
+
+
+
+
+
+
 
     # Instanciation des classes
-    obj_interpreter = Interpreter() 
-    obj_writer = Writer()
+    obj_interpreter = Interpreter(machine_config) 
+    obj_writer = Writer(machine_config)
 
     list_datas = obj_interpreter.analyze(path_gcode_file) # Récup data
     obj_writer.write_report(Path(path_export_file).with_suffix(".txt"), path_gcode_file, list_datas) # Création du rapport
@@ -62,7 +84,7 @@ def display_results(path_export_file):
     '''Affiche la fenêtre avec le résultat de l'analyse du G Code'''
 
     result_window = tk.Toplevel()
-    result_window.title("Part Program Analyzer: Résultat")
+    result_window.title("PartAndCNCProgramAnalyzer: Résultat")
     result_window.state('zoomed')
 
     result_frame = tk.Frame(result_window)
@@ -107,14 +129,16 @@ def display_results(path_export_file):
     debug_text.config(state=tk.DISABLED)
 
 # Fonction traitement G-Code
-def viewer_launch(path_gcode_file,stl_path_file):
+def viewer_launch(path_gcode_file, stl_path_file, machine_name):
 
     # Charge les config
-    Machine.load_config() 
-    ToolPathConfigLoader.load_config() 
+    MachinesConfigLoader.load_config()
+    ToolPathConfigLoader.load_config()
+
+    machine_config = MachinesConfigLoader.get_machine(machine_name)
 
     # Instanciation des classes
-    obj_interpreter = Interpreter() 
+    obj_interpreter = Interpreter(machine_config) 
     obj_toolpathviewer = ToolPathViewer()
 
     # Récup datas g-code
@@ -123,15 +147,27 @@ def viewer_launch(path_gcode_file,stl_path_file):
     # Start viewer
     obj_toolpathviewer.open_viewer(stl_path_file, list_datas)
 
+
 # Point d'entrée app
 def main():
     """Point d'entrée de l'application"""
+
+
+
+
+
+    # Charge les config
+    MachinesConfigLoader.load_config() 
+
+
+
+
 
     style = Style(theme="darkly") 
 
     # Création form avec nom & dimension
     form = style.master
-    form.title("Part Program Analyzer")
+    form.title("PartAndCNCProgramAnalyzer")
     form.state('zoomed')
 
     # Frame principale
@@ -149,60 +185,93 @@ def main():
     # Titre
     tb.Label(
         main_frame,
-        text="Part Program Analyzer",
+        text="PartAndCNCProgramAnalyzer",
         font=("Segoe UI", 30, "bold"),
         bootstyle="dark",
         foreground="white"
     ).grid(column=0, row=0, columnspan=1, pady=(0, 30))
 
-    # G-Code section
-    tb.Label(main_frame, text="📂 Fichier G-Code :", font=("Segoe UI", 18)).grid(column=0, row=1, sticky="w", pady=5)
+    # Section code ISO
+    tb.Label(main_frame, text="📂 Fichier ISO :", font=("Segoe UI", 18)).grid(column=0, row=1, sticky="w", pady=5)
     label_gcode = tb.Label(main_frame, text="", width=50, bootstyle="secondary")
     label_gcode.grid(column=0, row=2, sticky="w")
-    tb.Button(main_frame, text="Ouvrir", bootstyle="primary", command=lambda: file_select("Fichier G-Code", "*.anc;*.nc;*.txt", label_gcode, update_calculate_button)).grid(column=0, row=3, sticky="w", pady=5)
+    tb.Button(main_frame, text="Ouvrir", bootstyle="primary", command=lambda: file_select("Fichier ISO", "*.anc;*.nc;*.txt", label_gcode, update_calculate_button)).grid(column=0, row=3, sticky="w", pady=5)
 
-    tb.Label(main_frame, text="📁 Dossier de sortie :", font=("Segoe UI", 18)).grid(column=0, row=4, sticky="w", pady=(20, 5))
-    label_output = tb.Label(main_frame, text=os.getenv('TEMP'), width=50, bootstyle="secondary")
+    # Section STL
+    tb.Label(main_frame, text="📂 Fichier STL :", font=("Segoe UI", 18)).grid(column=1, row=1, sticky="w", padx=(40, 0), pady=5)
+    label_stl = tb.Label(main_frame, text="", width=50, bootstyle="secondary")
+    label_stl.grid(column=1, row=2, sticky="w", padx=(40, 0))
+    tb.Button(main_frame, text="Ouvrir", bootstyle="primary", command=lambda: file_select("Fichier STL", "*.stl", label_stl, update_calculate_button)).grid(column=1, row=3, sticky="w", padx=(40, 0), pady=5)
+
+    # Section dossier de sortie
+    tb.Label(main_frame, text="📁 Dossier de sortie :", font=("Segoe UI", 18)).grid(column=0, row=4, sticky="w", pady=5)
+    label_output = tb.Label(main_frame, text="C:\\Temp", width=50, bootstyle="secondary")
     label_output.grid(column=0, row=5, sticky="w")
     tb.Button(main_frame, text="Choisir", bootstyle="primary", command=lambda: folder_select(label_output)).grid(column=0, row=6, sticky="w", pady=5)
 
-    # Ligne vide
-    tb.Label(main_frame, text="", font=("Segoe UI", 12)).grid(column=0, row=7, sticky="w", pady=(5, 60))
+    # Section machine
+    tb.Label(main_frame, text="🛁 Machine :", font=("Segoe UI", 18)).grid(column=0, row=8, sticky="w", pady=5)
+    # Données fournies par le JSON
+    machines_list = MachinesConfigLoader.get_machines_names()
+    selected_machine = tk.StringVar(value=machines_list[0] if machines_list else "")
+    machine_combo = tb.Combobox(
+        main_frame,
+        textvariable=selected_machine,
+        values=machines_list,
+        state="readonly",
+        width=47,
+        bootstyle="secondary"
+    )
+    machine_combo.grid(column=0, row=9, sticky="w", pady=5)
 
-    # Fonction local pour désactiver les boutons tant que le G-Code n'est pas chargé
+    # Section visualiser
+    tb.Label(main_frame, text="🔍 Visualiser la configuration machine :", font=("Segoe UI", 18)).grid(column=1, row=8, sticky="w", padx=(40, 0), pady=(20, 5))
+
+
+
+
+
+
+
+
+
+    # A modifier pour visualiser une image de la machine ou une page de config
+
+    #visualize_button = tb.Button(main_frame, text="Visualiser", bootstyle="success", command=lambda: viewer_launch())
+    #visualize_button.grid(column=1, row=9, sticky="w", padx=(40, 0), pady=5)
+
+
+
+
+
+
+
+
+
+    # Section calculer
+    # Fonction local pour désactiver les boutons tant que le ISO n'est pas chargé
     def update_calculate_button():
-        if label_gcode.cget("text"):  # Vérifier si un fichier G-code est sélectionné
+        if label_gcode.cget("text"):  # Vérifier si un fichier ISO est sélectionné
             calculate_button.config(state="normal")  # Activer le bouton "Calculer"
             visualize_button.config(state="normal")  # Activer le bouton "Visualiser"
         else:
             calculate_button.config(state="disabled")  # Désactiver le bouton "Calculer"
             visualize_button.config(state="disabled")  # Désactiver le bouton "Visualiser"
 
-    tb.Label(main_frame, text="⏱️ Calcul des données :", font=("Segoe UI", 18)).grid(column=0, row=8, sticky="w", pady=(20, 5))    
-    
-    # Bouton Calculer
+    tb.Label(main_frame, text="⏱️ Calcul des données :", font=("Segoe UI", 18)).grid(column=0, row=11, sticky="w", pady=(20, 5))    
     calculate_button = tb.Button(main_frame, text="Calculer", bootstyle="success", command=lambda: gcode_treatment(
         label_gcode.cget("text"),
-        Path(label_output.cget("text")) / get_datetime_string()))
-    calculate_button.grid(column=0, row=9, sticky="w", pady=5)
+        Path(label_output.cget("text")) / get_datetime_string(), machine_combo.get()))
+    calculate_button.grid(column=0, row=12, sticky="w", pady=5)
     calculate_button.config(state="disabled")  # Désactiver au début
-
-    # STL section
-    tb.Label(main_frame, text="📂 Fichier STL :", font=("Segoe UI", 18)).grid(column=1, row=1, sticky="w", padx=(40, 0), pady=5)
-    label_stl = tb.Label(main_frame, text="", width=50, bootstyle="secondary")
-    label_stl.grid(column=1, row=2, sticky="w", padx=(40, 0))
-    tb.Button(main_frame, text="Ouvrir", bootstyle="primary", command=lambda: file_select("Fichier STL", "*.stl", label_stl, update_calculate_button)).grid(column=1, row=3, sticky="w", padx=(40, 0), pady=5)
-
-    # Ligne vide
-    tb.Label(main_frame, text="", font=("Segoe UI", 12)).grid(column=0, row=7, sticky="w", pady=(5, 60))
-
-    tb.Label(main_frame, text="🎥 Visualiser les trajectoires :", font=("Segoe UI", 18)).grid(column=1, row=8, sticky="w", padx=(40, 0), pady=(20, 5))
     
     # Bouton Visualiser
+    tb.Label(main_frame, text="🎥 Visualiser les trajectoires :", font=("Segoe UI", 18)).grid(column=1, row=11, sticky="w", padx=(40, 0), pady=(20, 5))
     visualize_button = tb.Button(main_frame, text="Visualiser", bootstyle="success", command=lambda: viewer_launch(
         label_gcode.cget("text"), 
-        label_stl.cget("text")))
-    visualize_button.grid(column=1, row=9, sticky="w", padx=(40, 0), pady=5)
+        label_stl.cget("text"),
+        machine_combo.get()))
+    visualize_button.grid(column=1, row=12, sticky="w", padx=(40, 0), pady=5)
     visualize_button.config(state="disabled")  # Désactiver au début
 
     form.mainloop()
